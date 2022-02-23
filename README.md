@@ -1,4 +1,3 @@
-# AdvancedNodeStarter
-Starting project for a course on Advanced Node @ Udemy
+- Caching, Testing, Performance improvements and File uploads
 
 
