@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  NODE_ENV: ci
+  PORT: 3000
+
 jobs:
   build:
 
@@ -19,6 +23,14 @@ jobs:
         node-version: [12.x, 14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
+    services:
+      redis:
+        image: redis
+      mongodb:
+        image: mongo:3.4.23
+        ports:
+          - 27017:27017
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -26,6 +38,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - name: Install dependencies
+      run: npm install
+    - name: Run build
+      run: npm run build
+    - name: Run server
+      run: nohup npm run start &
+      run: sleep 3
+    - name: Run tests
+      run: npm run test
